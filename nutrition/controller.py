@@ -7,4 +7,4 @@ class Test(APIView):
 
     def get(self, request):
         
-        return Response({"messge": "Hello, world!"}, status=status.HTTP_200_OK)
+        return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
