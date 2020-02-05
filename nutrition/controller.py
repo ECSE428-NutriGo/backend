@@ -1,6 +1,7 @@
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
 
 from nutrition.models import FoodItem, Meal
 from nutrition.serializers import FoodItemSerializer, MealSerializer
@@ -13,7 +14,9 @@ class Test(APIView):
         return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
 
 class FoodItemController(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     #
     # This method creates a food item given protein, carb, fat and a name
@@ -21,6 +24,7 @@ class FoodItemController(APIView):
     #
     def post(self, request):
         # Gather input parameters and check for errors
+        user = request.user
         name = request.data.get('name', None)
         if name is None:
             return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST) 
@@ -44,7 +48,7 @@ class FoodItemController(APIView):
             return Response({"message": "Error: negative carb provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         # Create FoodItem in database
-        fooditem = FoodItem.objects.create(name=name, protein=protein, fat=fat, carb=carb)
+        fooditem = FoodItem.objects.create(name=name, protein=protein, fat=fat, carb=carb, user=user)
 
         # Create and send response
         fooditem_serializer = FoodItemSerializer(fooditem)
@@ -55,7 +59,9 @@ class FoodItemController(APIView):
 
 
 class MealController(APIView):
-    permission_classes = (permissions.AllowAny,)
+    # permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
 
     #
     # This method creates a meal given a list of fooditem ids and a name in the request.data
@@ -66,6 +72,7 @@ class MealController(APIView):
     def post(self, request):
         fooditem_ids = request.data.get('fooditems', [])
         name = request.data.get('name', None)
+        user = request.user
 
         # Check if name provided
         if name is None:
@@ -77,7 +84,7 @@ class MealController(APIView):
             fat = request.data.get('fat', 0)
             carb = request.data.get('carb', 0)
 
-            meal = Meal.objects.create(name=name, protein=protein, carb=carb, fat=fat)
+            meal = Meal.objects.create(name=name, protein=protein, carb=carb, fat=fat, user=user)
             meal_serializer = MealSerializer(meal)
             response = {
                 "meal": meal_serializer.data
@@ -89,7 +96,7 @@ class MealController(APIView):
         protein = 0
         carb = 0
         fat = 0
-        meal = Meal.objects.create(name=name)
+        meal = Meal.objects.create(name=name, user=user)
 
         # total macro nutrients and add fooditems to meal
         for fooditem_id in fooditem_ids:

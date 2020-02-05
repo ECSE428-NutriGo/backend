@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # added apps
     'nutrition.apps.NutritionConfig',
@@ -46,7 +47,17 @@ INSTALLED_APPS = [
     # Rest framework
     'rest_framework',
     'corsheaders',
+
+    # Rest auth
+    'rest_auth',
+    'rest_framework.authtoken',
+    'rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
