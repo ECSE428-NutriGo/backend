@@ -5,4 +5,6 @@ app_name = 'nutrition'
 
 urlpatterns = [
     path('test/', controller.Test.as_view()),
+    path('fooditem/', controller.FoodItemController.as_view()),
+    path('meal/', controller.MealController.as_view())
 ]
