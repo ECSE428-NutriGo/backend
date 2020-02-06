@@ -12,3 +12,8 @@ class MealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
         fields = '__all__'
+
+class MealEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MealEntry
+        fields = '__all__'

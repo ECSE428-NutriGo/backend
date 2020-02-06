@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 
-from nutrition.models import FoodItem, Meal
-from nutrition.serializers import FoodItemSerializer, MealSerializer
+from nutrition.models import FoodItem, Meal, MealEntry
+from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
 
 class Test(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -120,3 +120,37 @@ class MealController(APIView):
             "meal": meal_serializer.data
         }
         return Response(response, status=status.HTTP_200_OK)
+
+
+class MealEntryController(APIView):
+
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    #
+    # This method creates a meal entry given a date stamp and a Meal name in the request.data
+    # The created meal entry is returned on success with status code 200
+    #
+    def post(self, request):
+
+        user = request.user
+ 
+        meal_id = request.data.get('meal', None)
+
+        if meal_id is None:
+            return Response({"message": "Error: no meal provided"}, status=status.HTTP_400_BAD_REQUEST) 
+
+        meal = Meal.objects.get(pk=meal_id)
+        mealentry = MealEntry.objects.create(user=user, meal=meal)
+
+        mealentry_serializer = MealEntrySerializer(mealentry)
+        response = {
+            "mealentry": mealentry_serializer.data
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
+
+        
+
