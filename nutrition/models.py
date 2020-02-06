@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 from datetime import datetime
 
 # Create your models here.
@@ -29,7 +30,7 @@ class Meal(models.Model):
 class MealEntry(models.Model):
     user = models.ForeignKey(User, related_name='mealentries', on_delete=models.CASCADE)
     meal = models.ForeignKey(Meal, related_name='mealentries', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=datetime.now)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.meal.name + " - " + timestamp
+        return self.meal.name + " - " + self.timestamp
