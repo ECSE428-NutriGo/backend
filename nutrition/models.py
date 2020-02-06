@@ -33,4 +33,4 @@ class MealEntry(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.meal.name + " - " + self.timestamp
+        return self.meal.name + " - " + str(self.timestamp)
