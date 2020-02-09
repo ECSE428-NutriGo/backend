@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
     # added apps
     'nutrition.apps.NutritionConfig',
+    'profile.apps.ProfileConfig',
 
     # Rest framework
     'rest_framework',
@@ -95,6 +96,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
+}
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'profile.serializers.UserSerializer'
 }
 
 # Database
