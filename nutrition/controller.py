@@ -10,11 +10,9 @@ class Test(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request):
-        
         return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
 
 class FoodItemController(APIView):
-    # permission_classes = (permissions.AllowAny,)
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
@@ -59,7 +57,6 @@ class FoodItemController(APIView):
 
 
 class MealController(APIView):
-    # permission_classes = (permissions.AllowAny,)
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
@@ -121,9 +118,26 @@ class MealController(APIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+    #
+    # This method retrieves the entire list of meals created by the requesting user
+    #
+    def get(self, request):
+        user = request.user
+        meals = Meal.objects.filter(user=user)
+
+        meals_list = []
+
+        for meal in meals:
+            meals_list.append(MealSerializer(meal).data)
+        
+        response = {
+            "meals": meals_list
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class MealEntryController(APIView):
-
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
@@ -149,8 +163,3 @@ class MealEntryController(APIView):
         }
 
         return Response(response, status=status.HTTP_200_OK)
-
-
-
-        
-
