@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount'
     
 ]
 
@@ -101,6 +102,8 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'profile.serializers.UserSerializer'
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

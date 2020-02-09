@@ -24,8 +24,8 @@ class UserSerializer(UserDetailsSerializer):
         if profile_data and protein_target:
             profile.protein_target = protein_target
 
-        if profile_data and protein_target:
-            profile.protein_target = protein_target
+        if profile_data and carb_target:
+            profile.carb_target = carb_target
 
         if profile_data and fat_target:
             profile.fat_target = fat_target
