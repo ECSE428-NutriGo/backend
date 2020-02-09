@@ -5,6 +5,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from nutrition.models import FoodItem, Meal, MealEntry
 from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
+from django.utils import timezone
 
 class Test(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -148,14 +149,14 @@ class MealEntryController(APIView):
     def post(self, request):
 
         user = request.user
- 
         meal_id = request.data.get('meal', None)
+        timestamp = request.data.get('timestamp', timezone.now())
 
         if meal_id is None:
             return Response({"message": "Error: no meal provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         meal = Meal.objects.get(pk=meal_id)
-        mealentry = MealEntry.objects.create(user=user, meal=meal)
+        mealentry = MealEntry.objects.create(user=user, meal=meal, timestamp=timestamp)
 
         mealentry_serializer = MealEntrySerializer(mealentry)
         response = {
