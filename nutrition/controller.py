@@ -7,12 +7,6 @@ from nutrition.models import FoodItem, Meal, MealEntry
 from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
 from django.utils import timezone
 
-class Test(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    def get(self, request):
-        return Response({"message": "Hello, world!"}, status=status.HTTP_200_OK)
-
 class FoodItemController(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
