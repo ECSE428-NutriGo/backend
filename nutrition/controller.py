@@ -129,6 +129,10 @@ class MealController(APIView):
             "meals": meals_list
         }
 
+        if len(meals_list) == 0:
+            return Response({"message": "No Meals Exist"}, status=status.HTTP_200_OK) 
+
+
         return Response(response, status=status.HTTP_200_OK)
 
 
