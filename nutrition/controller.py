@@ -188,6 +188,7 @@ class DailyMetrics(APIView):
             fat += meal_entry.meal.fat
         
         response = {
+            "num_meals": len(meal_entries),
             "protein": protein,
             "carb": carb,
             "fat": fat
