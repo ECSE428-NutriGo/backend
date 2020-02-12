@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from nutrition.models import FoodItem, Meal, MealEntry
 from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
 from django.utils import timezone
+from datetime import timedelta, date
 
 class FoodItemController(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -159,6 +160,37 @@ class MealEntryController(APIView):
         mealentry_serializer = MealEntrySerializer(mealentry)
         response = {
             "mealentry": mealentry_serializer.data
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class DailyMetrics(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    #
+    # This method gets the current macronutrients totals that have been logged for that day
+    #
+    def get(self, request):
+
+        user = request.user
+        today = date.today()
+        meal_entries = MealEntry.objects.filter(user=user, timestamp__range=[today, today + timedelta(days=1)])
+
+        protein = 0
+        carb = 0
+        fat = 0
+
+        for meal_entry in meal_entries:
+            protein += meal_entry.meal.protein
+            carb += meal_entry.meal.carb
+            fat += meal_entry.meal.fat
+        
+        response = {
+            "protein": protein,
+            "carb": carb,
+            "fat": fat
         }
 
         return Response(response, status=status.HTTP_200_OK)
