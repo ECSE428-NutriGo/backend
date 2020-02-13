@@ -23,7 +23,6 @@ class CreateUser(APITestCase):
         Profile.objects.all().delete() #i think it would do this when it deletes all the users because of the FK
 
     def test_create_profile(self):
-        self.user = User.objects.create_superuser(username=self.email, email=self.email, password=self.password)
 
         profile = Profile.objects.get(user=self.user)
         self.assertEqual(self.user.profile, profile)
