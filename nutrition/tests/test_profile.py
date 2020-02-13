@@ -43,3 +43,10 @@ class TestUserCreation(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['protein_target'], '190')
+    
+    def test_create_profile(self):
+
+        self.user = User.objects.create_user(username=self.email, email=self.email)
+
+        profile = Profile.objects.get(user=self.user)
+        self.assertEqual(self.user.profile, profile)
