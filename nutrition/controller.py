@@ -12,6 +12,19 @@ class FoodItemController(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
+    def get(self, request):
+        fooditems = FoodItem.objects.all()
+
+        fooditems_list = []
+
+        for fooditem in fooditems:
+            fooditems_list.append(FoodItemSerializer(fooditem).data)
+
+        response = {
+            "fooditems": fooditems_list
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
     #
     # This method creates a food item given protein, carb, fat and a name
     # The created food item is returned on success with status code 200
