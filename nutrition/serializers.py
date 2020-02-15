@@ -9,6 +9,8 @@ class FoodItemSerializer(serializers.ModelSerializer):
 
 
 class MealSerializer(serializers.ModelSerializer):
+    fooditems = FoodItemSerializer(many=True)
+
     class Meta:
         model = Meal
         fields = '__all__'
