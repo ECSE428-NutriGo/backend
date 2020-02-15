@@ -100,7 +100,7 @@ class CreateMeal(APITestCase):
         # Assert HTTP Response
         self.assertEqual(response.status_code, 200)
         self.assertEqual(meal_response["name"], name)
-        self.assertEqual(meal_response["fooditems"], fooditems)
+        self.assertEqual(len(meal_response["fooditems"]), len(fooditems))
         self.assertEqual(meal_response["protein"], self.protein1 + self.protein2 + self.protein3)
         self.assertEqual(meal_response["fat"], self.fat1 + self.fat2 + self.fat3)
         self.assertEqual(meal_response["carb"], self.carb1 + self.carb2 + self.carb3)
