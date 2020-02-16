@@ -15,9 +15,12 @@ class CreateFoodItem(APITestCase):
         FoodItem.objects.all().delete()
 
     def test_missing_macronutrient(self):
-        name = "oatmeal"
-        fat = 12
-        carb = 36
+        name = "apple"
+        protein = 1
+        fat = 0
+        carb = 14
+
+        num_fooditems = len(FoodItem.objects.all())
 
         url = '/nutri/test/'
         factory = APIRequestFactory()
@@ -26,7 +29,7 @@ class CreateFoodItem(APITestCase):
             url,
             json.dumps({
                 "name": name,
-                "fat": fat,
+                "protein":protein,
                 "carb": carb
             }),
             content_type='application/json'
@@ -35,12 +38,16 @@ class CreateFoodItem(APITestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(num_fooditems, len(FoodItem.objects.all()))
+        self.assertEqual(response.data['message'], 'Error: no fat value provided')
 
     def test_negative_macronutrient(self):
-        name = "oatmeal"
-        protein = -8
-        fat = 12
-        carb = 36
+        name = "apple"
+        protein = -1
+        fat = 0
+        carb = 14
+
+        num_fooditems = len(FoodItem.objects.all())
 
         url = '/nutri/test/'
         factory = APIRequestFactory()
@@ -59,11 +66,16 @@ class CreateFoodItem(APITestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(num_fooditems, len(FoodItem.objects.all()))
+        self.assertEqual(response.data['message'], 'Error: negative protein provided')
 
     def test_missing_name(self):
-        protein = 9
-        fat = 12
-        carb = 36
+        name = "apple"
+        protein = 1
+        fat = 0
+        carb = 14
+
+        num_fooditems = len(FoodItem.objects.all())
 
         url = '/nutri/test/'
         factory = APIRequestFactory()
@@ -80,12 +92,14 @@ class CreateFoodItem(APITestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(num_fooditems, len(FoodItem.objects.all()))
+        self.assertEqual(response.data['message'], 'Error: no name provided')
     
     def test_create_food_item(self):
-        name = "oatmeal"
-        protein = 9
-        fat = 12
-        carb = 36
+        name = "apple"
+        protein = 1
+        fat = 0
+        carb = 14
 
         url = '/nutri/fooditem/'
         factory = APIRequestFactory()

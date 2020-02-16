@@ -77,7 +77,7 @@ class CreateMeal(APITestCase):
         self.assertEqual(len(meal.fooditems.all()), 0)
 
     def test_create_meal(self):
-        name = "meal 1"
+        name = "dinner"
         fooditems = [1, 2, 3]
 
         url = '/nutri/meal/'
@@ -128,6 +128,7 @@ class CreateMeal(APITestCase):
         response = view(request)
 
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['message'], 'Error: no name provided')
     
     def test_query_meal_list(self):
         meals = [1, 2, 3]
@@ -148,6 +149,7 @@ class CreateMeal(APITestCase):
         self.assertEqual(meals_response[0]['id'], meals[0])
         self.assertEqual(meals_response[1]['id'], meals[1])
         self.assertEqual(meals_response[2]['id'], meals[2])
+        self.assertEqual(len(meals_response), len(meals))
     
     def test_query_meal_list_no_meals(self):
        
@@ -163,6 +165,3 @@ class CreateMeal(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['message'], "No Meals Exist")
-
-
-
