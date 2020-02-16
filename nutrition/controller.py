@@ -39,23 +39,23 @@ class FoodItemController(APIView):
         protein = request.data.get('protein', None)
         if protein is None:
             return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST) 
-        if protein < 0:
+        if int(protein) < 0:
             return Response({"message": "Error: negative protein provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         fat = request.data.get('fat', None)
         if fat is None:
             return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST) 
-        if fat < 0:
+        if int(fat) < 0:
             return Response({"message": "Error: negative fat provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         carb = request.data.get('carb', None)
         if carb is None:
             return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST) 
-        if carb < 0:
+        if int(carb) < 0:
             return Response({"message": "Error: negative carb provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         # Create FoodItem in database
-        fooditem = FoodItem.objects.create(name=name, protein=protein, fat=fat, carb=carb, user=user)
+        fooditem = FoodItem.objects.create(name=name, protein=int(protein), fat=int(fat), carb=int(carb), user=user)
 
         # Create and send response
         fooditem_serializer = FoodItemSerializer(fooditem)
