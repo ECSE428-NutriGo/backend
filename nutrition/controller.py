@@ -107,6 +107,15 @@ class MealController(APIView):
             fat = request.data.get('fat', 0)
             carb = request.data.get('carb', 0)
 
+            if int(protein) < 0:
+                return Response({"message": "Error: negative protein"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if int(fat) < 0:
+                return Response({"message": "Error: negative fat"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if int(carb) < 0:
+                return Response({"message": "Error: negative carbs"}, status=status.HTTP_400_BAD_REQUEST)
+
             meal = Meal.objects.create(name=name, protein=protein, carb=carb, fat=fat, user=user)
             meal_serializer = MealSerializer(meal)
             response = {
