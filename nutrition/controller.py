@@ -80,6 +80,9 @@ class MealController(APIView):
         name = request.data.get('name', None)
         user = request.user
 
+        print("DEBUG")
+        print(request.data)
+
         # Check if name provided
         if name is None:
             return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST)
