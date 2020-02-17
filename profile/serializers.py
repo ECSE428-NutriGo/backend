@@ -10,6 +10,7 @@ class UserSerializer(UserDetailsSerializer):
 
     class Meta(UserDetailsSerializer.Meta):
         fields = UserDetailsSerializer.Meta.fields + ('protein_target','carb_target','fat_target')
+        extra_kwargs = {'username': {'required': False}}
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile', {})
