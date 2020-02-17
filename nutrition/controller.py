@@ -43,17 +43,23 @@ class FoodItemController(APIView):
         protein = request.data.get('protein', None)
         if protein is None:
             return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+        if protein == '':
+            return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST) 
         if int(protein) < 0:
             return Response({"message": "Error: negative protein provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         fat = request.data.get('fat', None)
         if fat is None:
             return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+        if fat == '':
+            return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST) 
         if int(fat) < 0:
             return Response({"message": "Error: negative fat provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         carb = request.data.get('carb', None)
         if carb is None:
+            return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+        if carb == '':
             return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST) 
         if int(carb) < 0:
             return Response({"message": "Error: negative carb provided"}, status=status.HTTP_400_BAD_REQUEST) 
