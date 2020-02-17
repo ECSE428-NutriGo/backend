@@ -26,6 +26,24 @@ class CreateDailyMetrics(APITestCase):
         MealEntry.objects.all().delete()
         Meal.objects.all().delete()
 
+    def test_get_daily_metrics_no_meals(self):
+
+        user = User.objects.create_user(username='new@user.com', email='new@user.com')
+
+        url = '/nutri/daily/'
+        factory = APIRequestFactory()
+        view = controller.DailyMetrics.as_view()
+        request = factory.get(url)
+        
+        force_authenticate(request, user=user)
+        response = view(request)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['num_meals'], 0)
+        self.assertEqual(response.data['protein'], 0)
+        self.assertEqual(response.data['carb'], 0)
+        self.assertEqual(response.data['fat'], 0)
+
     def test_get_daily_metrics_one_meal(self):
 
         url = '/nutri/daily/'

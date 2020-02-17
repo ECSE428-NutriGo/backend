@@ -53,6 +53,36 @@ class CreateMealEntry(APITestCase):
         # Assert Object created in DB
         self.assertEqual(meal_entry.id, meal_id)
 
+    def test_create_meal_entry_with_timestamp(self):
+        name = "meal entry"
+        timestamp = '2020-02-04T03:02:24Z'
+        meal_id = 1
+
+        url = '/nutri/mealentry/'
+        factory = APIRequestFactory()
+        view = controller.MealEntryController.as_view()
+        request = factory.post(
+            url, 
+            json.dumps({
+                "meal": meal_id,
+                "timestamp": timestamp
+            }),
+            content_type='application/json'
+        )
+        force_authenticate(request, user=self.user)
+        response = view(request)
+
+        meal_entry_response = response.data['mealentry']
+        meal_entry = MealEntry.objects.get(pk=meal_entry_response['id'])
+
+        # Assert HTTP Response
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(meal_entry_response["meal"], meal_id)
+
+        # Assert Object created in DB
+        self.assertEqual(meal_entry.id, meal_id)
+        self.assertEqual(str(meal_entry.timestamp), '2020-02-04 03:02:24+00:00')
+
     def test_create_meal_entry_no_meal(self):
 
         url = '/nutri/mealentry/'
@@ -69,4 +99,5 @@ class CreateMealEntry(APITestCase):
 
         # Assert HTTP Response
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['message'], 'Error: no meal provided')
 
