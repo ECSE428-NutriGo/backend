@@ -37,6 +37,9 @@ class FoodItemController(APIView):
         if name is None:
             return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
+        if name == '':
+            return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST)
+
         protein = request.data.get('protein', None)
         if protein is None:
             return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST) 
@@ -86,6 +89,10 @@ class MealController(APIView):
 
         # Check if name provided
         if name is None:
+            return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if empty name provided
+        if name == '':
             return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         # use given protein, fat, and carb data if no food items
