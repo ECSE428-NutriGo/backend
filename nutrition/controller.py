@@ -7,6 +7,7 @@ from nutrition.models import FoodItem, Meal, MealEntry
 from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
 from django.utils import timezone
 from datetime import timedelta, date
+import ast
 
 class FoodItemController(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -80,8 +81,8 @@ class MealController(APIView):
         name = request.data.get('name', None)
         user = request.user
 
-        print("DEBUG")
-        print(request.data)
+        if type(fooditem_ids) == str:
+            fooditem_ids = ast.literal_eval(fooditem_ids)
 
         # Check if name provided
         if name is None:
