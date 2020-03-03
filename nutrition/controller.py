@@ -7,7 +7,7 @@ from nutrition.models import FoodItem, Meal, MealEntry
 from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
 from django.utils import timezone
 from datetime import timedelta, date
-import ast
+import ast, sys
 
 class FoodItemController(APIView):
     permission_classes = (permissions.IsAuthenticated,)
@@ -271,3 +271,34 @@ class DailyMetrics(APIView):
         }
 
         return Response(response, status=status.HTTP_200_OK)
+
+
+class FoodItemQuery(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    #
+    # This method returns fooditems that belong in given range of macros
+    #
+    def get(self, request):
+        user = request.user
+        
+        fat_low = request.data.get('fat_low', 0)
+        fat_high = request.data.get('fat_high', sys.maxsize)
+        carb_low = request.data.get('carb_low', 0)
+        carb_high = request.data.get('carb_high', sys.maxsize)
+        protein_low = request.data.get('protein_low', 0)
+        protein_high = request.data.get('protein_high', sys.maxsize)
+
+        fooditems = FoodItem.objects.filter(fat__gte=fat_low, fat__lte=fat_high, carb__gte=carb_low, carb__lte=carb_high, protein__gte=protein_low, protein__lte=protein_high)
+
+        fooditems_list = []
+
+        for fooditem in fooditems:
+            fooditems_list.append(FoodItemSerializer(fooditem).data)
+
+        response = {
+            "fooditems": fooditems_list
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
