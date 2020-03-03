@@ -9,6 +9,10 @@ class Profile(models.Model):
     protein_target = models.IntegerField(default=0)
     carb_target = models.IntegerField(default=0)
     fat_target = models.IntegerField(default=0)
+    current_weight = models.IntegerField(default=0)
+    target_weight = models.IntegerField(default=0)
+    age = models.IntegerField(default=0)
+    hours_activity = models.IntegerField(default=0)
 
     def __str__(self):
         return self.user.username
