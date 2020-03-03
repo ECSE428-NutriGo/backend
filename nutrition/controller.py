@@ -273,7 +273,7 @@ class DailyMetrics(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-class FoodItemQuery(APIView):
+class FoodItemQueryRange(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
@@ -303,12 +303,12 @@ class FoodItemQuery(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-class MealsQuery(APIView):
+class MealsQueryRange(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
 
     #
-    # This method returns fooditems that belong in given range of macros
+    # This method returns meals that belong in given range of macros
     #
     def get(self, request):
         user = request.user
@@ -332,3 +332,32 @@ class MealsQuery(APIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+
+class MealsQueryFoodItem(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    #
+    # This method returns meals that have a given food item
+    #
+    def get(self, request):
+        fooditem_ids = request.data.get('fooditems', [])
+        user = request.user
+
+        if type(fooditem_ids) == str:
+            fooditem_ids = ast.literal_eval(fooditem_ids)
+
+        meals = Meal.objects.all()
+
+        for fooditem_id in fooditem_ids:
+            meals = meals.filter(fooditems__pk__contains=fooditem_id)
+
+        meals_list = []
+
+        for meal in meals:
+            meals_list.append(MealSerializer(meal).data)
+
+        response = {
+            "meals": meals_list
+        }
+        return Response(response, status=status.HTTP_200_OK)
