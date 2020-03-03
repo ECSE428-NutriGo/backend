@@ -74,6 +74,43 @@ class FoodItemController(APIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+    def put(self, request):
+        user = request.user
+        protein = request.data.get('protein', None)
+        fooditem_id = request.data.get('fooditem', None)
+
+        if fooditem_id is None:
+            return Response({"message": "Error: no fooditem id provided"}, status=status.HTTP_400_BAD_REQUEST) 
+
+        fooditem = FoodItem.objects.get(pk=fooditem_id)
+
+        if fooditem is None:
+            return Response({"message": "Error: fooditem id not found"}, status=status.HTTP_404_NOT_FOUND) 
+
+        name = request.data.get('name', None)
+        if name is not None:
+            fooditem.name = name
+
+        protein = request.data.get('protein', None)
+        if protein is not None:
+            fooditem.protein = protein
+
+        fat = request.data.get('fat', None)
+        if fat is not None:
+            fooditem.fat = fat
+
+        carb = request.data.get('carb', None)
+        if carb is not None:
+            fooditem.carb = carb
+
+        fooditem.save()
+
+        response = {
+            "fooditem": FoodItemSerializer(fooditem).data
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class MealController(APIView):
     permission_classes = (permissions.IsAuthenticated,)
