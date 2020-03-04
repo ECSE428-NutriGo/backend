@@ -5,4 +5,5 @@ app_name = 'profile'
 
 urlpatterns = [
     path('lockout/', controller.LockOutUser.as_view()),
+    path('users/', controller.UserSearch.as_view())
 ]

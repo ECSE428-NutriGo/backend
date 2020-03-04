@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from django.core.exceptions import ObjectDoesNotExist
+from profile.serializers import UserSerializer
 
 from django.contrib.auth.models import User
 from profile.models import Profile
@@ -56,3 +57,29 @@ class LockOutUser(APIView):
         }
         
         return Response(response, status=status.HTTP_200_OK)
+
+
+class UserSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request):
+        keyword = request.data.get('keyword', None)
+
+        if keyword is None:
+            return Response({"message": "Error: Please provide a keyword"}, status=status.HTTP_400_BAD_REQUEST)
+
+        users = User.objects.filter(username__icontains=keyword)
+
+        users_serializers = []
+
+        for user in users:
+            users_serializers.append(UserSerializer(user).data)
+
+        response = {
+            "users": users_serializers
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+        
