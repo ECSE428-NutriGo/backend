@@ -1,5 +1,6 @@
 asgiref==3.2.3
 attrs==19.3.0
+behave==1.2.6
 certifi==2019.11.28
 chardet==3.0.4
 defusedxml==0.6.0
