@@ -82,4 +82,25 @@ class UserSearch(APIView):
 
         return Response(response, status=status.HTTP_200_OK)
 
-        
+class IndividualUserSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request):
+        user_email = request.data.get('email', None)
+
+        if user_email is None:
+            return Response({"message": "Error: Please provide a user email"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(username=user_email)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_serializer = UserSerializer(user).data
+
+        response = {
+            "user": user_serializer
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
