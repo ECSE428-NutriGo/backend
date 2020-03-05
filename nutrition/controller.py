@@ -76,7 +76,6 @@ class FoodItemController(APIView):
 
     def put(self, request):
         user = request.user
-        protein = request.data.get('protein', None)
         fooditem_id = request.data.get('fooditem', None)
 
         if fooditem_id is None:
