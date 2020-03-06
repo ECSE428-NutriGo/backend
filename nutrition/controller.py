@@ -422,3 +422,20 @@ class MealsQueryFoodItem(APIView):
             "meals": meals_list
         }
         return Response(response, status=status.HTTP_200_OK)
+
+class MealDetails(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    #
+    # This method returns an individual meal given a meal id
+    #
+    def get(self, request, meal_id):
+        
+        user = request.user
+        try:
+            meal = Meal.objects.get(pk=int(meal_id), user=user)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided meal does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({"meal": MealSerializer(meal).data}, status=status.HTTP_200_OK)
