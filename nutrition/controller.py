@@ -213,6 +213,48 @@ class MealController(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
     #
+    # Given a fooditem id and a meal id, remove the fooditem from the meal
+    #
+    def patch(self, request):
+        user = request.user
+        meal_id = request.data.get('meal', None)
+        fooditem_id = request.data.get('fooditem', None)
+
+        if meal_id is None:
+            return Response({"message": "Error: No meal provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if fooditem_id is None:
+            return Response({"message": "Error: No fooditem provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            meal = Meal.objects.get(pk=meal_id, user=user)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided meal does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            fooditem = FoodItem.objects.get(pk=fooditem_id)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided fooditem does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not meal.fooditems.filter(pk=fooditem_id).exists():
+            return Response({"message": "Error: Provided fooditem is not part of the given meal"}, status=status.HTTP_400_BAD_REQUEST)
+
+        meal.fooditems.remove(fooditem)
+
+        meal.carb -= fooditem.carb
+        meal.fat -= fooditem.fat
+        meal.protein -= fooditem.protein
+
+        meal.save()
+
+        # Create and send response
+        meal_serializer = MealSerializer(meal)
+        response = {
+            "meal": meal_serializer.data
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+    #
     # This method deletes a meal given a meal id
     #
     def delete(self, request):
