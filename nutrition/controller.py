@@ -2,6 +2,7 @@ from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
+from django.core.exceptions import ObjectDoesNotExist
 
 from nutrition.models import FoodItem, Meal, MealEntry
 from nutrition.serializers import FoodItemSerializer, MealSerializer, MealEntrySerializer
@@ -210,6 +211,25 @@ class MealController(APIView):
 
 
         return Response(response, status=status.HTTP_200_OK)
+
+    #
+    # This method deletes a meal given a meal id
+    #
+    def delete(self, request):
+        user = request.user
+        meal_id = request.data.get('meal', None)
+
+        if meal_id is None:
+            return Response({"message": "Error: No meal provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            meal = Meal.objects.get(pk=meal_id, user=user)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided meal does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        meal.delete()
+
+        return Response({"message": str(meal_id) + " successfully deleted"}, status=status.HTTP_200_OK)
 
 
 class MealEntryController(APIView):
