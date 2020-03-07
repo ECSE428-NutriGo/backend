@@ -301,6 +301,21 @@ class MealEntryController(APIView):
 
         return Response(response, status=status.HTTP_200_OK)
 
+    def get(self, request):
+
+        user = request.user
+        mealentries = MealEntry.objects.filter(user=user)
+        mealentries_res = []
+        
+        for mealentry in mealentries:
+            mealentries_res.append(MealEntrySerializer(mealentry).data)
+
+        response = {
+            "mealentries": mealentries_res
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class DailyMetrics(APIView):
     permission_classes = (permissions.IsAuthenticated,)
