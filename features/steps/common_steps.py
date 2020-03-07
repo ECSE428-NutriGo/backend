@@ -11,10 +11,10 @@ from nutrition.models import Meal, MealEntry, FoodItem
 def step_impl(context, text):                 #write the steps to perform the given statement
     email = "testA@email.com"
     username = "testA"
-    
+
     if text == "user"
         context.user = User.objects.create_user(username=username, email=email)
-    else if text == "system admin"
+    else if text == "admin"
         context.user = User.objects.create_user(username=username, email=email) #TODO admin version
     else fail('not a valid user type of the system')
 
