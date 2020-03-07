@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from nutrition import controller
 from nutrition.models import Meal, MealEntry, FoodItem
 
-import pdb
+# import pdb
 
 
 @when('the user requests to edit a food item’s attributes')
@@ -20,18 +20,19 @@ def step_impl(context):
         json.dumps({
             "fooditem_id": context.FoodItem.id,
             "name": "name2",
-            "protein": context.protein2,
-            "fat": context.fat2,
-            "carb": context.carb2}),
+            "protein": 2,
+            "fat": 2,
+            "carb": 2
+        }),
         content_type='application/json'
     )
     force_authenticate(request, user=context.user)
     context.response = view(request)
-    breakpoint()
-    
+    # breakpoint()
+
 @when('the food item was created by that user')
 def step_impl(context):
-    context.FoodItem = FoodItem.objects.create(name="created by user", protein=1, fat=1, carb=1, user=context.user)
+    context.FoodItem = FoodItem.objects.create(user=context.user, protein=1, fat=1, carb=1, name="created by user")
 @when('the user enters valid attributes')
 def step_impl(context):
     context.fooditem_name="name2"
@@ -42,11 +43,11 @@ def step_impl(context):
 @when('the food item was not created by that user')
 def step_impl(context):
     anotherUser = User.objects.create_user(username="testB", email="testB@email.com")
-    context.FoodItem = FoodItem.objects.create(name="created by another user", protein=1, fat=1, carb=1, user=anotherUser)
+    context.FoodItem = FoodItem.objects.create(user=anotherUser, protein=1, fat=1, carb=1, name="created by another user")
 @then('the system remembers the updated food attributes')
 def step_impl(context):
     # assert context.response.status_code == 200
-    breakpoint()
+    # breakpoint()
     fooditem = context.response.data['fooditem']
     assert fooditem.name == "name2"
     assert fooditem.fat==2
