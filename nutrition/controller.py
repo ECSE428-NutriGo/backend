@@ -316,6 +316,23 @@ class MealEntryController(APIView):
 
         return Response(response, status=status.HTTP_200_OK)
 
+    def delete(self, request):
+
+        user = request.user
+        mealentry_id = request.data.get('mealentry', None)
+
+        if mealentry_id is None:
+            return Response({"message": "Error: No meal entry provided"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            mealentry = MealEntry.objects.get(pk=int(mealentry_id), user=user)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided meal entry does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        mealentry.delete()
+
+        return Response({ "message": "Meal entry deleted"}, status=status.HTTP_200_OK)
+
 
 class DailyMetrics(APIView):
     permission_classes = (permissions.IsAuthenticated,)
