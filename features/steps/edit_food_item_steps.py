@@ -7,78 +7,64 @@ from django.contrib.auth.models import User
 from nutrition import controller
 from nutrition.models import Meal, MealEntry, FoodItem
 
+initial_name="name1"
+initial_protein=1
+initial_fat=1
+initial_carb=1
+
+valid_name="name2"
+valid_protein=2
+valid_fat=2
+valid_carb=2
+
+url = '/nutri/fooditem/'
+factory = APIRequestFactory()
+view = controller.FoodItemController.as_view()
+
 @given('there is a food item created by that user')
 def step_impl(context):
-    name1 = "name1"
-    protein1 = 1
-    fat1 = 1
-    carb1 = 1
-
-    url = '/nutri/fooditem/'
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()
-
-    request = factory.post(
+    creation_request = factory.post(
         url,
         json.dumps({
-            "name": name1,
-            "protein": protein1,
-            "fat": fat1,
-            "carb": carb1
+            "name": initial_name,
+            "protein": initial_protein,
+            "fat": initial_fat,
+            "carb": initial_carb
         }),
         content_type='application/json'
     )
-    force_authenticate(request, user=context.user)
-    context.fooditem_id = view(request).data['fooditem']['id']
+    force_authenticate(creation_request, user=context.user)
+    response = view(creation_request)
+    context.fooditem_id = response.data['fooditem']['id']
 
 @given('there is a food item that is not created by that user')
 def step_impl(context):
-    anotherUser = User.objects.create_user(username="testB", email="testB@email.com")
-
-    name1 = "name1"
-    protein1 = 1
-    fat1 = 1
-    carb1 = 1
-
-    url = '/nutri/fooditem/'
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()
-
-    request = factory.post(
+    creation_request = factory.post(
         url,
         json.dumps({
-            "name": name1,
-            "protein": protein1,
-            "fat": fat1,
-            "carb": carb1
+            "name": initial_name,
+            "protein": initial_protein,
+            "fat": initial_fat,
+            "carb": initial_carb
         }),
         content_type='application/json'
     )
-    force_authenticate(request, user=anotherUser)
-    context.fooditem_id = view(request).data['fooditem']['id']
+    anotherUser = User.objects.create_user(username="testB", email="testB@email.com")
+    force_authenticate(creation_request, user=anotherUser)
+    response = view(creation_request)
+    context.fooditem_id = response.data['fooditem']['id']
 
 
 @when('the user requests to edit that food item’s attributes')
 def step_impl(context):
-    url = '/nutri/fooditem/'
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()
-    request = factory.get(url)
-    force_authenticate(request, user=context.user)
-    response = view(request)
-    fooditem = response.data['fooditems'][0]
-
-    url = '/nutri/fooditem/'
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()
     request = factory.put(
         url,
         json.dumps({
             "fooditem": context.fooditem_id,
-            "name": "name2",
-            "protein": 2,
-            "fat": 2,
-            "carb": 2
+            "name": context.fooditem_name,
+            "protein": context.protein2,
+            "fat": context.fat2,
+            "carb": context.carb2
         }),
         content_type='application/json'
     )
@@ -87,38 +73,27 @@ def step_impl(context):
 
 @when('the user enters valid attributes')
 def step_impl(context):
-    url = '/nutri/fooditem/'
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()
-    request = factory.get(url)
-    force_authenticate(request, user=context.user)
-    response = view(request)
-
-    context.fooditem_name="name2"
-    context.protein2=2
-    context.fat2=2
-    context.carb2=2
+    context.fooditem_name=valid_name
+    context.protein2=valid_protein
+    context.fat2=valid_fat
+    context.carb2=valid_carb
 
 @then('the system remembers the updated food attributes')
 def step_impl(context):
     fooditem = context.response.data['fooditem']
-    assert fooditem["name"] == "name2"
-    assert fooditem["fat"]==2
-    assert fooditem["carb"]==2
-    assert fooditem["protein"]==2
+    assert fooditem["name"] == valid_name
+    assert fooditem["fat"]==valid_fat
+    assert fooditem["carb"]==valid_carb
+    assert fooditem["protein"]==valid_protein
 
 @then('the system does not allow the user to edit the attributes')
 def step_impl(context):
-
-    url = '/nutri/fooditem/'
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()
     request = factory.get(url)
     force_authenticate(request, user=context.user)
     response = view(request)
     fooditem = response.data['fooditems'][0]
 
-    assert fooditem["name"] == "name1"
-    assert fooditem["fat"] == 1
-    assert fooditem["carb"] == 1
-    assert fooditem["protein"] == 1
+    assert fooditem["name"] == initial_name
+    assert fooditem["fat"] == initial_fat
+    assert fooditem["carb"] == initial_carb
+    assert fooditem["protein"] == initial_carb
