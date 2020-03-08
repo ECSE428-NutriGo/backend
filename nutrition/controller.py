@@ -89,6 +89,10 @@ class FoodItemController(APIView):
 
         if fooditem is None:
             return Response({"message": "Error: fooditem id not found"}, status=status.HTTP_404_NOT_FOUND) 
+        if fooditem.user != user:
+            if not user.is_staff:
+                if not hasattr(user, 'is_admin') or not user.is_admin:
+                    return Response({"message": "Error: user is not the owner of this food item"}, status=status.HTTP_403_FORBIDDEN)
 
         name = request.data.get('name', None)
         if name is not None:

@@ -7,20 +7,27 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from profile import controller
 
+valid_weight = 100
+invalid_weight = -1
+
+url = '/profile/'
+factory = APIRequestFactory()
+view = controller.FoodItemController.as_view()      #TODO get necessary view
+
 @when('the user enters valid information for their {text} weight')
 def step_impl(context, text):
-    context.input_weight = 100
+    context.input_weight = valid_weight
 
 @when('the user enters invalid number for their {text} weight')
 def step_impl(context, text):
-    context.input_weight = -1
+    context.input_weight = invalid_weight
 
 @when('the user requests to edit the {text} weight of their profile')
 def step_impl(context, text):
     if text == "current":
-        pass    #TODO get type specifics
+        url = '/nutri/fooditem/'        #TODO get url
     elif text == "target":
-        pass    #TODO get type specifics
+        url = '/nutri/fooditem/'        #TODO get url
     else:
         fail('this test is not yet implemented for: ' + text + 'weight ')
 

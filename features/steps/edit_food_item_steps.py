@@ -8,6 +8,26 @@ from rest_framework.authtoken.models import Token
 from nutrition import controller
 from nutrition.models import Meal, MealEntry, FoodItem
 
+initial_name="name1"
+initial_protein=1
+initial_fat=1
+initial_carb=1
+
+valid_name="name2"
+valid_protein=2
+valid_fat=2
+valid_carb=2
+
+url = '/nutri/fooditem/'
+factory = APIRequestFactory()
+view = controller.FoodItemController.as_view()
+initial_json = json.dumps({
+    "name": initial_name,
+    "protein": initial_protein,
+    "fat": initial_fat,
+    "carb": initial_carb
+})
+
 @given('there is a food item created by that user')
 def step_impl(context):
     context.name1 = "name1"
@@ -81,7 +101,6 @@ def step_impl(context):
         content_type='application/json',
         HTTP_AUTHORIZATION='Token ' + token.key
     )
-    # force_authenticate(request, user=context.user)
     context.response = view(request)
 
 @when('the user enters valid attributes')

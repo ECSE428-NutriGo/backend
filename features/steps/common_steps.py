@@ -30,8 +30,10 @@ def step_impl(context, text):
 
 @then('the user should see a confirmation message')
 def step_impl(context):
-    assert context.response.status_code == 200
+    assert context.response.status_code >= 200
+    assert context.response.status_code < 300
 
 @then('the user should see an error message')
 def step_impl(context):
-    assert context.response.status_code >= 300
+    assert context.response.status_code >= 400
+    assert context.response.status_code < 600
