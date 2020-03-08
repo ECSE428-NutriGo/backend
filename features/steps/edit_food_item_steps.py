@@ -115,6 +115,7 @@ def step_impl(context):
 
 @then('the system remembers the updated food attributes')
 def step_impl(context):
+    print(context.response.data)
     fooditem = context.response.data['fooditem']
     fooditem_obj = FoodItem.objects.get(pk=context.fooditem_id)
 

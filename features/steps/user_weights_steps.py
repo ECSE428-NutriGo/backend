@@ -5,7 +5,7 @@ from rest_framework.utils import json
 
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from profile import controller
+from nutrition import controller
 
 valid_weight = 100
 invalid_weight = -1

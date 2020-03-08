@@ -83,7 +83,10 @@ class FoodItemController(APIView):
             return Response({"message": "Error: no fooditem id provided"}, status=status.HTTP_400_BAD_REQUEST) 
 
         try:
-            fooditem = FoodItem.objects.get(pk=fooditem_id, user=user)
+            if user.is_staff:
+                fooditem = FoodItem.objects.get(pk=fooditem_id)
+            else:
+                fooditem = FoodItem.objects.get(pk=fooditem_id, user=user)
         except ObjectDoesNotExist:
             return Response({"message": "Error: Provided fooditem does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
