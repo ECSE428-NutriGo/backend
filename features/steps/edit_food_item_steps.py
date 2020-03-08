@@ -20,35 +20,23 @@ valid_carb=2
 url = '/nutri/fooditem/'
 factory = APIRequestFactory()
 view = controller.FoodItemController.as_view()
+initial_json = json.dumps({
+    "name": initial_name,
+    "protein": initial_protein,
+    "fat": initial_fat,
+    "carb": initial_carb
+})
 
 @given('there is a food item created by that user')
 def step_impl(context):
-    creation_request = factory.post(
-        url,
-        json.dumps({
-            "name": initial_name,
-            "protein": initial_protein,
-            "fat": initial_fat,
-            "carb": initial_carb
-        }),
-        content_type='application/json'
-    )
+    creation_request = factory.post(url, initial_json, content_type='application/json')
     force_authenticate(creation_request, user=context.user)
     response = view(creation_request)
     context.fooditem_id = response.data['fooditem']['id']
 
 @given('there is a food item that is not created by that user')
 def step_impl(context):
-    creation_request = factory.post(
-        url,
-        json.dumps({
-            "name": initial_name,
-            "protein": initial_protein,
-            "fat": initial_fat,
-            "carb": initial_carb
-        }),
-        content_type='application/json'
-    )
+    creation_request = factory.post(url, initial_json, content_type='application/json')
     anotherUser = User.objects.create_user(username="testB", email="testB@email.com")
     force_authenticate(creation_request, user=anotherUser)
     response = view(creation_request)
