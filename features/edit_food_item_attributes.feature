@@ -11,7 +11,7 @@ And there is a food item created by that user
 When the user enters valid attributes
 And the user requests to edit that food item’s attributes
 Then the system remembers the updated food attributes
-And the response should be a success
+And the user should see a confirmation message
 
 Scenario: Edit Other's Food Item Attributes (Error Flow)
 

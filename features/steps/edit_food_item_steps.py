@@ -7,8 +7,6 @@ from django.contrib.auth.models import User
 from nutrition import controller
 from nutrition.models import Meal, MealEntry, FoodItem
 
-import pdb
-
 @given('there is a food item created by that user')
 def step_impl(context):
     name1 = "name1"
@@ -124,11 +122,3 @@ def step_impl(context):
     assert fooditem["fat"] == 1
     assert fooditem["carb"] == 1
     assert fooditem["protein"] == 1
-
-@then('the response should be a success')
-def step_impl(context):
-    assert context.response.status_code == 200
-
-@then('the user should see an error message')
-def step_impl(context):
-    assert context.response.status_code >= 300

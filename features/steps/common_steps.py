@@ -27,3 +27,11 @@ def step_impl(context, text):                 #write the steps to perform the gi
 @then('a "{text}" message is issued')
 def step_impl(context, text):
     assert context.message == text
+
+@then('the user should see a confirmation message')
+def step_impl(context):
+    assert context.response.status_code == 200
+
+@then('the user should see an error message')
+def step_impl(context):
+    assert context.response.status_code >= 300
