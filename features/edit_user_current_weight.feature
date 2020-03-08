@@ -18,4 +18,3 @@ Given NutriGo user is logged into the application
 When the user enters invalid number for their current weight
 And the user requests to edit the current weight of their profile
 Then the system will maintain the old current weight for the user’s profile
-And the user should see an error message

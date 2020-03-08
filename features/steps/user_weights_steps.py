@@ -1,9 +1,10 @@
 from behave import *
 
-from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
+from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate, APIClient
 from rest_framework.utils import json
 
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from profile import controller
 
 @when('the user enters valid information for their {text} weight')
@@ -23,40 +24,21 @@ def step_impl(context, text):
     else:
         fail('this test is not yet implemented for: ' + text + 'weight ')
 
-    url = '/nutri/fooditem/'        #TODO get url
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()      #TODO get necessary view
+    token, created = Token.objects.get_or_create(user=context.user)
 
-    request = factory.put(
-        url,
-        json.dumps({
-            #TODO get formatting
-        }),
-        content_type='application/json'
-    )
-    force_authenticate(request, user=context.user)
-    context.response = view(request)
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    context.response = client.put('/rest-auth/user/', {
+        text+"_weight": context.input_weight
+    }, format='json')
 
 @then('the system will register the new {text} weight for the user')
 def step_impl(context, text):
-    url = '/nutri/fooditem/'        #TODO get url
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()      #TODO get necessary view
 
-    request = factory.get(url)
-    force_authenticate(request, user=context.user)
-    response = view(request)
-
-    assert input_weight == response.data[]          #TODO verify new input
+    assert context.input_weight == context.response.data[text+"_weight"]
 
 @then('the system will maintain the old {text} weight for the user’s profile')
 def step_impl(context, text):
-    url = '/nutri/fooditem/'        #TODO get url
-    factory = APIRequestFactory()
-    view = controller.FoodItemController.as_view()      #TODO get necessary view
 
-    request = factory.get(url)
-    force_authenticate(request, user=context.user)
-    response = view(request)
-
-    assert == response.data[]          #TODO verify old input
+    assert context.input_weight != context.user.profile.current_weight

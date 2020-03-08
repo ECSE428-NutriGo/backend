@@ -26,4 +26,3 @@ Given NutriGo user is logged into the application
 When the user enters invalid information for a given attributes
 And the user requests to edit the attributes of their profile
 Then the system will not register the new user attributes for the invalid data
-And the user should see an error message
