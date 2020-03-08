@@ -1,10 +1,11 @@
 from behave import *
 
-from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
+from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate, APIClient
 from rest_framework.utils import json
 
 from django.contrib.auth.models import User
-from profile import controller
+from rest_framework.authtoken.models import Token
+from nutrition import controller
 
 valid_weight = 100
 invalid_weight = -1
@@ -30,29 +31,21 @@ def step_impl(context, text):
     else:
         fail('this test is not yet implemented for: ' + text + 'weight ')
 
-    input_json = json.dumps({
+    token, created = Token.objects.get_or_create(user=context.user)
+
+    client = APIClient()
+    client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+
+    context.response = client.put('/rest-auth/user/', {
         text+"_weight": context.input_weight
-    })
-    request = factory.put(url,input_json,content_type='application/json')
-    force_authenticate(request, user=context.user)
-    context.response = view(request)
+    }, format='json')
 
 @then('the system will register the new {text} weight for the user')
 def step_impl(context, text):
-    url = '/nutri/fooditem/'        #TODO get url
 
-    request = factory.get(url)
-    force_authenticate(request, user=context.user)
-    response = view(request)
-
-    # assert input_weight == response.data[]          #TODO verify new input
+    assert context.input_weight == context.response.data[text+"_weight"]
 
 @then('the system will maintain the old {text} weight for the user’s profile')
 def step_impl(context, text):
-    url = '/nutri/fooditem/'        #TODO get url
 
-    request = factory.get(url)
-    force_authenticate(request, user=context.user)
-    response = view(request)
-
-    # assert == response.data[]          #TODO verify old input
+    assert context.input_weight != context.user.profile.current_weight
