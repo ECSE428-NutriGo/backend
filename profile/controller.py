@@ -64,12 +64,15 @@ class UserSearch(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        keyword = request.data.get('keyword', None)
+        keyword = request.query_params.get('keyword', None)
 
         if keyword is None:
-            return Response({"message": "Error: Please provide a keyword"}, status=status.HTTP_400_BAD_REQUEST)
+            users = User.objects.all()
+        else:
+            users = User.objects.filter(username__icontains=keyword)
+            if users.__len__() < 1:
+                return Response({"message": "Error: no names contain " + keyword}, status=status.HTTP_400_BAD_REQUEST)
 
-        users = User.objects.filter(username__icontains=keyword)
 
         users_serializers = []
 
@@ -87,7 +90,7 @@ class IndividualUserSearch(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        user_email = request.data.get('email', None)
+        user_email = request.query_params.get('email', None)
 
         if user_email is None:
             return Response({"message": "Error: Please provide a user email"}, status=status.HTTP_400_BAD_REQUEST)

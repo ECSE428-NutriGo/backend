@@ -5,7 +5,7 @@ from rest_framework.utils import json
 
 from django.contrib.auth.models import User
 from nutrition import controller
-from nutrition.models import Meal, MealEntry, FoodItem
+
 
 initial_name="name1"
 initial_protein=1
