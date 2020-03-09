@@ -38,17 +38,17 @@ def step_impl(context):
 
 @then('the System will fetch the users of the system')
 def step_impl(context):
-    assert context.response.data['users'].__len__() == 2
+    assert len(context.response.data['users']) == 2
     assert context.response.data['users'][0]['email'] == context.user.email or context.response.data['users'][0]['email'] == context.user2.email
     assert context.response.data['users'][1]['email'] == context.user.email or context.response.data['users'][1]['email'] == context.user2.email
 
 @then('the system will fetch the users of the system that satisfy the filters')
 def step_impl(context):
-    assert context.response.data['users'].__len__() == 1
+    assert len(context.response.data['users']) == 1
     assert context.response.data['users'][0]['email'] == 'testB@email.com'
 
 @then('the system will display no users')
 def step_impl(context):
     if hasattr(context.response.data, 'users'):
-        if context.response.data['users'].__len__() > 0:
+        if len(ontext.response.data['users']) > 0:
             fail('users were displayed')

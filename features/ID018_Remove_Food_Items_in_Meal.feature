@@ -7,25 +7,19 @@ So that the meal will contain only the required ingredients
 Scenario: Remove a single Food Item from a User's Meal (Normal Flow)
 
 Given NutriGo user is logged into the application
-When the user requests to remove a food item from a meal
-And the meal was created by the user
-And the user selects a valid food item to remove
+And there are food items available
+And there is a meal that was created by the user
+When the user selects a valid food item to remove
+And the user requests to remove a food item from that meal
 Then the system remembers the updated meal
-And the user should see a success message
-
-Scenario: Remove multiple Food Items from a User's Meal (Alternative Flow)
-
-Given NutriGo user is logged into the application
-When the user requests to remove a food item from a meal
-And the meal was created by that user
-And the user selects multiple valid food items to remove
-Then the system remembers the updated meal
-And the user should see a success message
+And the user should see a confirmation message
 
 Scenario: Remove a food item from another User's Meal (Error Flow)
 
 Given NutriGo user is logged into the application
-When the user requests to remove a food item from a meal
-And the meal was not created by that user
+And there are food items available
+And there is a meal that was created by another user
+When the user selects a valid food item to remove
+And the user requests to remove a food item from that meal
 Then the system does not allow the user to remove the given food item
 And the user should see an error message

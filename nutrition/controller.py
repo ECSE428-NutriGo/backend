@@ -36,34 +36,34 @@ class FoodItemController(APIView):
         user = request.user
         name = request.data.get('name', None)
         if name is None:
-            return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         if name == '':
             return Response({"message": "Error: no name provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         protein = request.data.get('protein', None)
         if protein is None:
-            return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST)
         if protein == '':
-            return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no protein value provided"}, status=status.HTTP_400_BAD_REQUEST)
         if int(protein) < 0:
-            return Response({"message": "Error: negative protein provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: negative protein provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         fat = request.data.get('fat', None)
         if fat is None:
-            return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST)
         if fat == '':
-            return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no fat value provided"}, status=status.HTTP_400_BAD_REQUEST)
         if int(fat) < 0:
-            return Response({"message": "Error: negative fat provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: negative fat provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         carb = request.data.get('carb', None)
         if carb is None:
-            return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST)
         if carb == '':
-            return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no carb value provided"}, status=status.HTTP_400_BAD_REQUEST)
         if int(carb) < 0:
-            return Response({"message": "Error: negative carb provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: negative carb provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create FoodItem in database
         fooditem = FoodItem.objects.create(name=name, protein=int(protein), fat=int(fat), carb=int(carb), user=user)
@@ -80,7 +80,7 @@ class FoodItemController(APIView):
         fooditem_id = request.data.get('fooditem', None)
 
         if fooditem_id is None:
-            return Response({"message": "Error: no fooditem id provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no fooditem id provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             if user.is_staff:
@@ -91,7 +91,7 @@ class FoodItemController(APIView):
             return Response({"message": "Error: Provided fooditem does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         if fooditem is None:
-            return Response({"message": "Error: fooditem id not found"}, status=status.HTTP_404_NOT_FOUND) 
+            return Response({"message": "Error: fooditem id not found"}, status=status.HTTP_404_NOT_FOUND)
         if fooditem.user != user:
             if not user.is_staff:
                 if not hasattr(user, 'is_admin') or not user.is_admin:
@@ -205,19 +205,20 @@ class MealController(APIView):
     #
     def get(self, request):
         user = request.user
-        meals = Meal.objects.filter(user=user)
+        # meals = Meal.objects.filter(user=user)
+        meals = Meal.objects.all()
 
         meals_list = []
 
         for meal in meals:
             meals_list.append(MealSerializer(meal).data)
-        
+
         response = {
             "meals": meals_list
         }
 
         if len(meals_list) == 0:
-            return Response({"message": "No Meals Exist"}, status=status.HTTP_200_OK) 
+            return Response({"message": "No Meals Exist"}, status=status.HTTP_200_OK)
 
 
         return Response(response, status=status.HTTP_200_OK)
@@ -299,7 +300,7 @@ class MealEntryController(APIView):
         timestamp = request.data.get('timestamp', timezone.now())
 
         if meal_id is None:
-            return Response({"message": "Error: no meal provided"}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({"message": "Error: no meal provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         meal = Meal.objects.get(pk=meal_id)
         mealentry = MealEntry.objects.create(user=user, meal=meal, timestamp=timestamp)
@@ -316,7 +317,7 @@ class MealEntryController(APIView):
         user = request.user
         mealentries = MealEntry.objects.filter(user=user)
         mealentries_res = []
-        
+
         for mealentry in mealentries:
             mealentries_res.append(MealEntrySerializer(mealentry).data)
 
@@ -333,7 +334,7 @@ class MealEntryController(APIView):
 
         if mealentry_id is None:
             return Response({"message": "Error: No meal entry provided"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
             mealentry = MealEntry.objects.get(pk=int(mealentry_id), user=user)
         except ObjectDoesNotExist:
@@ -365,7 +366,7 @@ class DailyMetrics(APIView):
             protein += meal_entry.meal.protein
             carb += meal_entry.meal.carb
             fat += meal_entry.meal.fat
-        
+
         response = {
             "num_meals": len(meal_entries),
             "protein": protein,
@@ -385,7 +386,7 @@ class FoodItemQueryRange(APIView):
     #
     def get(self, request):
         user = request.user
-        
+
         fat_low = request.data.get('fat_low', 0)
         fat_high = request.data.get('fat_high', sys.maxsize)
         carb_low = request.data.get('carb_low', 0)
@@ -415,7 +416,7 @@ class MealsQueryRange(APIView):
     #
     def get(self, request):
         user = request.user
-        
+
         fat_low = request.data.get('fat_low', 0)
         fat_high = request.data.get('fat_high', sys.maxsize)
         carb_low = request.data.get('carb_low', 0)
@@ -473,7 +474,7 @@ class MealDetails(APIView):
     # This method returns an individual meal given a meal id
     #
     def get(self, request, meal_id):
-        
+
         user = request.user
         try:
             meal = Meal.objects.get(pk=int(meal_id), user=user)

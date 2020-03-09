@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from profile.serializers import UserSerializer
 from profile import controller
 
-import pdb
 
 url = '/profile/user/'
 factory = APIRequestFactory()
