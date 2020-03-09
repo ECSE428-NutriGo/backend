@@ -4,25 +4,35 @@ As a user
 I would like to query the list of food item available
 So that I can view food items to add to my meals
 
-Scenario: Query Food Item List (Normal Flow)
+Scenario: Query all Food Item List (Normal Flow)
 
 Given NutriGo user is logged into the application
+And food items have been created
 When the user requests to query food items in the system
-And the user enters a valid search filter to filter the results
-Then the system displays a list of food items containing the search filters
+Then the system displays a list of all food items
 
-Scenario: Query all Food Items (Alternate Flow)
+Scenario: Query all then filters some Food Items (Alternate Flow)
 
 Given NutriGo user is logged into the application
-When the user requests to query all food items in the system
-And the system displays a list of all food items in the system
+And food items have been created
+When the user requests to query food items in the system
+Then the system displays a list of all food items
 And the user then enters a valid search filter to filter the results
 Then the system filters the current results to only those containing the search filters
+
+Scenario: Query some Food Items (Alternate Flow)
+
+Given NutriGo user is logged into the application
+And food items have been created
+When the user enters a valid search filter to filter the results
+When the user requests to query food items in the system
+Then the system displays a list of food items containing the search filters
 
 Scenario: Query Food Items with No Result (Error Flow)
 
 Given NutriGo user is logged into the application
-When the user requests to query food items in the system
-And the user enters a valid search filter to filter the results
-And no food items in the system contain the search filter
-Then the system displays an error message
+And food items have been created
+When the user enters a valid search filter to filter the results
+But no food items in the system contain the search filter
+And the user requests to query food items in the system
+Then the system should see an error message

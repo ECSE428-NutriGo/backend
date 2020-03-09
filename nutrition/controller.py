@@ -15,12 +15,20 @@ class FoodItemController(APIView):
     authentication_classes = (TokenAuthentication,)
 
     def get(self, request):
-        fooditems = FoodItem.objects.all()
+        filter = request.query_params.get('filter', None)
+        if filter is not None:
+            fooditems = FoodItem.objects.filter(name__icontains=filter)
+        else:
+            fooditems = FoodItem.objects.all()
+
+        if len(fooditems) == 0:
+            return Response({"message": "Error: no food items exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         fooditems_list = []
 
         for fooditem in fooditems:
             fooditems_list.append(FoodItemSerializer(fooditem).data)
+
 
         response = {
             "fooditems": fooditems_list
