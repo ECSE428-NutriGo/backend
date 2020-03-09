@@ -6,3 +6,4 @@ install:
 script:
 - "./manage.py migrate"
 - pytest
+- behave
