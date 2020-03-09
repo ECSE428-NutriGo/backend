@@ -29,14 +29,4 @@ def step_impl(context):
     pass
 @then('the System will suspend the User from the system')
 def step_impl(context):
-    # data = {"email": context.user2.email}
-    # request = factory.get(
-    #     '/profile/user/',
-    #     data,
-    #     format='application/json'
-    # )
-    # force_authenticate(request, user=context.user)
-    # response = controller.IndividualUserSearch.as_view()(request)
-    # breakpoint()
-    # assert response.data['user']['is_active'] is False
     assert context.response.data['message'] == "User " + context.user2.email + " is locked out"
