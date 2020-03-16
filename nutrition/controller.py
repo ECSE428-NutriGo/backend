@@ -557,3 +557,33 @@ class MealDetails(APIView):
             return Response({"message": "Error: Provided meal does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"meal": MealSerializer(meal).data}, status=status.HTTP_200_OK)
+
+
+class MealEntryQueryRange(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    #
+    # This method returns meals that belong in given range of macros
+    #
+    def get(self, request):
+        user = request.user
+
+        fat_low = request.data.get('fat_low', 0)
+        fat_high = request.data.get('fat_high', sys.maxsize)
+        carb_low = request.data.get('carb_low', 0)
+        carb_high = request.data.get('carb_high', sys.maxsize)
+        protein_low = request.data.get('protein_low', 0)
+        protein_high = request.data.get('protein_high', sys.maxsize)
+
+        mealentries = MealEntry.objects.filter(user=user, meal__fat__gte=fat_low, meal__fat__lte=fat_high, meal__carb__gte=carb_low, meal__carb__lte=carb_high, meal__protein__gte=protein_low, meal__protein__lte=protein_high)
+
+        mealentries_list = []
+
+        for me in mealentries:
+            mealentries_list.append(MealEntrySerializer(me).data)
+
+        response = {
+            "mealentries": mealentries_list
+        }
+        return Response(response, status=status.HTTP_200_OK)

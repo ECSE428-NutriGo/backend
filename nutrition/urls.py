@@ -11,5 +11,6 @@ urlpatterns = [
     path('meal/item/', controller.MealsQueryFoodItem.as_view()),
     path('meal/<meal_id>/', controller.MealDetails.as_view()),
     path('mealentry/', controller.MealEntryController.as_view()),
+    path('mealentry/range/', controller.MealEntryQueryRange.as_view()),
     path('daily/', controller.DailyMetrics.as_view())
 ]
