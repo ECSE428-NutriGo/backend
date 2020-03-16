@@ -58,6 +58,28 @@ class LockOutUser(APIView):
         
         return Response(response, status=status.HTTP_200_OK)
 
+    #
+    # Delete a user, this cannot be undone
+    #
+    def delete(self, request):
+        user_email = request.data.get('email', None)
+
+        if user_email is None:
+            return Response({"message": "Error: Please provide a user email"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(username=user_email)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.delete()
+
+        response = {
+            "message": "User " + user_email + " is deleted"
+        }
+        
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class UserSearch(APIView):
     permission_classes = (permissions.IsAuthenticated, permissions.IsAdminUser,)
