@@ -297,6 +297,9 @@ class MealController(APIView):
         except ObjectDoesNotExist:
             return Response({"message": "Error: Provided fooditem does not exist"}, status=status.HTTP_400_BAD_REQUEST)
 
+        if meal.fooditems.filter(pk=fooditem_id).exists():
+            return Response({"message": "Error: Provided fooditem is already part of the given meal"}, status=status.HTTP_400_BAD_REQUEST)
+
         meal.fooditems.add(fooditem)
 
         meal.carb += fooditem.carb
@@ -370,6 +373,31 @@ class MealEntryController(APIView):
 
         response = {
             "mealentries": mealentries_res
+        }
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    #
+    # Edit date and time of a meal entry
+    #
+    def put(self, request):
+        user = request.user
+        mealentry_id = request.data.get('meal_entry', None)
+        timestamp = request.data.get('timestamp', None)
+
+        try:
+            mealentry = MealEntry.objects.get(pk=int(mealentry_id), user=user)
+        except ObjectDoesNotExist:
+            return Response({"message": "Error: Provided meal entry does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if timestamp is None:
+            return Response({"message": "Error: No timestamp provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        mealentry.timestamp = timestamp
+        mealentry.save()
+
+        response = {
+            "mealentry": MealEntrySerializer(mealentry).data
         }
 
         return Response(response, status=status.HTTP_200_OK)
